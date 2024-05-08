@@ -30,7 +30,7 @@ asset_icon = resource_path('assets/images/alienwar_icon.png')
 icon = pygame.image.load(asset_icon)
 
 #cargar sonido de fondo
-asset_sound = resource_path('assets/images/neon-gaming-128925.mp3')
+asset_sound = resource_path('assets/sounds/neon-gaming-128925.mp3')
 sound = pygame.mixer.music.load(asset_sound)
 
 #cargar imagen nave
