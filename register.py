@@ -4,8 +4,13 @@ import mysql.connector
 from mysql.connector import Error
 
 class RegisterWindow:
-    
+    '''
+    clase para poder registrar usuarios en nuestra base de datos
+    '''
     def __init__(self, master):
+        '''
+        constructor en el que creamos una pequeña interfaz que nos permita introducir los campos para el nombre de usuario y la contraseña y un botón para registrarlo
+        '''
         self.master = master
         self.master.title("Registro")
 
@@ -28,6 +33,9 @@ class RegisterWindow:
         self.register_button.grid(row=2, columnspan=2, pady=10)
 
     def register_user(self):
+        '''
+        método que coge el nombre y la contraseña introducidas en las cajas de texto para guardarlas en la base de datos en el caso de que no estén vacíos los campos
+        '''
         username = self.entry_username.get()
         password = self.entry_password.get()
 
