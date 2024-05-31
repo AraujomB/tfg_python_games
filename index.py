@@ -90,6 +90,9 @@ class GamesInterface:
         root.mainloop()
 
     def play_snake(self):
+        """
+        Método para ejecutar el script del juego Snake
+        """
         #detenemos la música de la interfaz
         pygame.mixer.music.stop()
         subprocess.run(["python", "games/snake.py"])
@@ -97,20 +100,28 @@ class GamesInterface:
         pygame.mixer.music.play(-1)
 
     def play_alien(self):
+        """
+        Método para ejecutar el script del juego Alienwar
+        """
         pygame.mixer.music.stop()
         subprocess.run(["python", "games/alienwar.py"])
         pygame.mixer.music.play(-1)
 
     def play_cars(self):
+        """
+        Método para ejecutar el script del juego Cars
+        """
         pygame.mixer.music.stop()
         subprocess.run(["python", "games/cars.py"])
         pygame.mixer.music.play(-1)
 
 class LoginWindow:
-
+    """
+    Clase para crear una ventana de login y tener un control de usuarios para poder acceder a nuestra interfaz de juegos
+    """
     def __init__(self, master):
         '''
-        declaramos todos los campos para el nombre de usuario y la contraseña
+        Declaramos todos los campos para el nombre de usuario y la contraseña
         y los botones para iniciar sesión o registrarse
         '''
         self.master = master
@@ -142,26 +153,27 @@ class LoginWindow:
 
     def center_window(self):
         '''
-        método para centrar la ventana de inicio de sesión en nuestra pantalla
+        Método para centrar la ventana de inicio de sesión en nuestra pantalla
         '''
-        # Obtener las dimensiones de la pantalla
+        #obtener las dimensiones de la pantalla
         screen_width = self.master.winfo_screenwidth()
         screen_height = self.master.winfo_screenheight()
 
-        # Calcular las coordenadas para centrar la ventana
-        x_coordinate = int((screen_width / 2) - (300 / 2))  # Ancho de la ventana emergente
-        y_coordinate = int((screen_height / 2) - (200 / 2))  # Alto de la ventana emergente
+        #calcular las coordenadas para centrar la ventana
+        x_coordinate = int((screen_width / 2) - (300 / 2))  #ancho de la ventana emergente
+        y_coordinate = int((screen_height / 2) - (200 / 2))  #alto de la ventana emergente
 
-        # Establecer la posición de la ventana en las coordenadas calculadas
+        #establecer la posición de la ventana en las coordenadas calculadas
         self.master.geometry("+{}+{}".format(x_coordinate, y_coordinate))
 
     def check_credentials(self):
         '''
-        comprobar si el usuario y la contraseña dados en el inicio de sesión corresponden con la base de datos
+        Comprobar si el usuario y la contraseña dados en el inicio de sesión corresponden con la base de datos
         '''
         username = self.entry_username.get()
         password = self.entry_password.get()
 
+        #conexión con la base de datos usando el user predeterminado root
         connection = mysql.connector.connect(
             host='localhost',
             database='tfg',
@@ -169,11 +181,13 @@ class LoginWindow:
             password=''
         )
 
+        #comprobar que la conexión con la base de datos ha ido correctamente
         if connection.is_connected():
-            cursor = connection.cursor()
-            cursor.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, password))
-            user = cursor.fetchone()
-
+            cursor = connection.cursor() #cursor para mandar peticiones a la base de datos
+            cursor.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, password)) #petición que queremos ejecutar, en este caso que nos recoja los datos del usuario con el nombre y contraseña introducidos
+            user = cursor.fetchone() #recoger la primera línea de la respuesta a la petición echa en el execute
+            
+            #comprobar si ha devuelto el usuario
             if user:
                 messagebox.showinfo("Inicio de sesión exitoso", f"Bienvenido, {username}!")
                 self.master.destroy()
@@ -183,31 +197,31 @@ class LoginWindow:
         else:
             messagebox.showerror("Error de conexión", "No se pudo conectar a la base de datos")
 
+        #cerrar conexión
         cursor.close()
         connection.close()
 
     def open_register_window(self):
         '''
-        mostrar la ventana de registro de usuario
+        Mostrar la ventana de registro de usuario
         '''
-        self.master.withdraw()
-        register_root = tk.Toplevel(self.master)
+        self.master.withdraw() #ocultar la ventana de login sin destruirla
+        register_root = tk.Toplevel(self.master) #crear una ventana independiente para el registro de usuarios asociada a la ventana de login
         RegisterWindow(register_root)
-        register_root.protocol("WM_DELETE_WINDOW", lambda: self.on_closing(register_root))
+        register_root.protocol("WM_DELETE_WINDOW", lambda: self.on_closing(register_root)) #protocolo para llamar al método on_closing() cuando el usuario cierre la ventana
 
     def on_closing(self, register_root):
         '''
-        función para cuando se cierre la ventana de registro de usuario
-        restaura la visibilidad de la ventana de inicio de sesión
+        Función para restaurar la visibilidad de la ventana de inicio de sesión una vez se cierre la de registro de usuario
         '''
-        register_root.destroy()
-        self.master.deiconify()
+        register_root.destroy() #cerrar la ventana liberando los recursos asociados a ella
+        self.master.deiconify() #restaurar la visibilidad de la ventana principal a la que está asociada
 
 def main():
     #Crear la ventana principal
     root = tk.Tk()
 
-    #Crear la interfaz de juegos
+    #Crear la interfaz de juegos con las configuraciones definidas en la clase
     interfaz = GamesInterface(root)
 
     #Centrar la ventana en la pantalla del usuario

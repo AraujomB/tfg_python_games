@@ -12,7 +12,7 @@ high_score = 0
 
 #Establecemos la configuración de la pantalla del juego
 screen = turtle.Screen()
-screen.title("Juego de Snake con Turtle")
+screen.title("Snake")
 screen.bgcolor('black')
 screen.setup(width=800, height=800)
 screen.tracer(0)
