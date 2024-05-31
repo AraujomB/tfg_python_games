@@ -7,13 +7,13 @@ import subprocess, pygame
 
 class GamesInterface:
     '''
-    clase para crear nuestra interfaz de juegos
+    Clase para crear nuestra interfaz de juegos en la que establecemos una configuración predeterminada para cuando sea instanciada
     '''
     def __init__(self, master):
         '''
         constructor en el cual creamos todos los apartados de nuestra interfaz y definimos los botones de cada juego y la configuración de la ventana
         '''
-        self.master = master
+        self.master = master #ventana principal
         self.master.title("Portal de Juegos TFG PABLO ARAUJO")
 
         window_width = 900
@@ -46,7 +46,7 @@ class GamesInterface:
         self.label = tk.Label(self.frame, text=f"MinijuegosTFG.com", font=title_font, bg=rgb_color, fg="white")
         self.label.pack(pady=20)
 
-        #cargar las imágenes y creamos los botones para cada juego
+        #cargar las imágenes y crear los botones para cada juego
         image_snake = Image.open("assets/images/snake_button.jpeg")
         image_snake = image_snake.resize((100, 100), Image.BILINEAR)
         self.photo_snake = ImageTk.PhotoImage(image_snake)
