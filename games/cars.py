@@ -108,6 +108,7 @@ def gameloop():
         clocK.tick(fps)
 
         for event in pygame.event.get():
+            #controlar si se cierra la ventana para finalizar el juego
             if event.type == QUIT:
                 run = False
 
@@ -178,14 +179,14 @@ def gameloop():
         for vehicle in vehicle_group:
             vehicle.rect.y += speed
             
-            # remove vehicle once it goes off screen
+            #eliminar vehículo una vez desaparezca de la pantalla
             if vehicle.rect.top >= height:
                 vehicle.kill()
                 
-                # add to score
+                #sumar marcador
                 score += 1
                 
-                # speed up the game after passing 5 vehicles
+                #aumentar la velocidad por cada 5 vehículos superados
                 if score > 0 and score % 5 == 0:
                     speed += 1
         
@@ -218,31 +219,31 @@ def gameloop():
             text_rect.center = (width / 2, 100)
             screen.blit(text, text_rect)
                 
-        pygame.display.update()
+            pygame.display.update()
 
-        #esperar a que el usario decida si seguir jugando o salir
-        while gameover:  
-            
-            clocK.tick(fps)
+            #esperar a que el usario decida si seguir jugando o salir
+            while gameover:  
+                
+                clocK.tick(fps)
 
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    gameover = False
-                    running = False
-                    
-                #coger el input entre y para sí o n para no
-                if event.type == KEYDOWN:
-                    if event.key == K_y:
-                        # reset the game
+                for event in pygame.event.get():
+                    if event.type == QUIT:
                         gameover = False
-                        speed = 2
-                        score = 0
-                        vehicle_group.empty()
-                        player.rect.center = [player_x, player_y]
-                    elif event.key == K_n:
-                        # exit the loops
-                        gameover = False
-                        running = False
+                        run = False
+                        
+                    #coger el input si(y)/no(n) para reiniciar o salir del juego
+                    if event.type == KEYDOWN:
+                        if event.key == K_y:
+                            #reiniciar el juego
+                            gameover = False
+                            speed = 2
+                            score = 0
+                            vehicle_group.empty()
+                            player.rect.center = [player_x, player_y]
+                        elif event.key == K_n:
+                            #salir del bucle
+                            gameover = False
+                            run = False
 
     pygame.quit()
 
