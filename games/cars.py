@@ -72,7 +72,7 @@ class PlayerVehicle(Vehicle):
     '''
     #establecemos una imagen para el coche dentro del constructor
     def __init__(self, x, y):
-        image = pygame.image.load('assets/images/cars/car.png')
+        image = pygame.image.load('assets/images/cars/pickup.png')
         super().__init__(image, x, y)
 
 #conjuntos de sprites
@@ -84,7 +84,7 @@ player = PlayerVehicle(player_x, player_y)
 player_group.add(player)
 
 #cargar las imágenes de los distintos vehículos
-image_filenames = ['pickup.png', 'semi_trailer.png', 'taxi.png', 'van.png']
+image_filenames = ['car.png', 'semi_trailer.png', 'taxi.png', 'van.png']
 vehicle_images = []
 for image_filename in image_filenames:
     image = pygame.image.load('assets/images/cars/' + image_filename)
