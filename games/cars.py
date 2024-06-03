@@ -1,4 +1,4 @@
-import pygame
+import pygame, sys, os
 from pygame.locals import *
 import random
 
@@ -11,12 +11,29 @@ screen_size = (width, height)
 screen = pygame.display.set_mode(screen_size)
 pygame.display.set_caption('Rápido & Furioso')
 
+#Obtenemos la ruta de los recursos
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+        #devolvemos la ruta absoluta de los recursos
+        return os.path.join(base_path, relative_path)
+
 #colores
 gray = (100, 100, 100)
 green = (76, 208, 56)
 red = (200, 0, 0)
 white = (255, 255, 255)
 yellow = (255, 232, 0)
+
+#cargar sonido de fondo
+asset_sound = resource_path('assets/sounds/apatrullando-la-ciudad.mp3')
+sound = pygame.mixer.music.load(asset_sound)
+
+#reproducimos el sonido de fondo en bucle y ajustamos el volumen
+pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(0.2)
 
 #configuración del juego
 gameover = False
