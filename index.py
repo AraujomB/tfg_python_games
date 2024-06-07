@@ -11,7 +11,7 @@ class GamesInterface:
     '''
     def __init__(self, master, config):
         '''
-        constructor en el cual creamos todos los apartados de nuestra interfaz y definimos los botones de cada juego y la configuración de la ventana
+        Constructor en el cual creamos todos los apartados de nuestra interfaz y definimos los botones de cada juego y la configuración de la ventana
         Recibe un archivo json con parámetros para la configuración de la interfaz
         '''
         self.master = master #ventana principal
