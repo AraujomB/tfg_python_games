@@ -28,7 +28,7 @@ white = (255, 255, 255)
 yellow = (255, 232, 0)
 
 #cargar sonido de fondo
-asset_sound = resource_path('assets/sounds/apatrullando-la-ciudad.mp3')
+asset_sound = resource_path('assets/sounds/pollo-loco.mp3')
 sound = pygame.mixer.music.load(asset_sound)
 
 #reproducimos el sonido de fondo en bucle y ajustamos el volumen
