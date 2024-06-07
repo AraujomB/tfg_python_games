@@ -11,7 +11,7 @@ screen_size = (width, height)
 screen = pygame.display.set_mode(screen_size)
 pygame.display.set_caption('Rápido & Furioso')
 
-#Obtenemos la ruta de los recursos
+#Obtenemos la ruta de los recursos para evitar conflictos al ejecutar desde el index
 def resource_path(relative_path):
     try:
         base_path = sys._MEIPASS
