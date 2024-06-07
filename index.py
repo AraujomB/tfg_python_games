@@ -3,7 +3,7 @@ from tkinter import ttk, messagebox
 import mysql.connector
 from register import RegisterWindow
 from PIL import Image, ImageTk
-import subprocess, pygame, json
+import subprocess, pygame, json, requests
 
 class GamesInterface:
     '''
@@ -21,6 +21,9 @@ class GamesInterface:
         window_height = config.get("window_height")
         volume = config.get("volume")
         title_interface = config.get("title")
+        #cargamos la configuración para poder conectarnos con la API de Twitch
+        self.client_id = config.get("twitch_client_id")
+        self.client_secret = config.get("twitch_client_secret")
 
         #configurar el fondo de pantalla
         background_img = Image.open("assets/images/background_interface.jpg")
@@ -71,9 +74,24 @@ class GamesInterface:
         self.button_cars = ttk.Button(self.frame, text="Jugar Cars", command=self.play_cars, image=self.photo_cars, compound=tk.TOP)
         self.button_cars.pack(side=tk.LEFT, padx=20, pady=10)
 
+        #creamos el espacio para la caja de texto y el botón de búsqueda de canales de Twitch según el juego
+        self.search_frame = tk.Frame(master, bg=rgb_color)
+        self.search_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=20)
+
+        self.game_entry = ttk.Entry(self.search_frame)
+        self.game_entry.pack(side=tk.LEFT, padx=10)
+
+        self.search_button = ttk.Button(self.search_frame, text="Buscar Juego en Twitch", command=self.search_channels)
+        self.search_button.pack(side=tk.LEFT, padx=10)
+
         #botón de Cerrar Sesión
         self.logout_button = ttk.Button(self.master, text="Cerrar Sesión", command=self.logout)
         self.logout_button.pack(side=tk.BOTTOM, padx=20, pady=10)
+
+        # Mostrar los streams destacados de Twitch
+        self.twitch_frame = tk.Frame(master, bg=rgb_color)
+        self.twitch_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=20)
+        self.show_top_twitch_streams(config)
 
     def logout(self):
         '''
@@ -117,6 +135,70 @@ class GamesInterface:
         pygame.mixer.music.stop()
         subprocess.run(["python", "games/cars.py"])
         pygame.mixer.music.play(-1)
+
+    def search_channels(self):
+        '''
+        Buscar canales de Twitch basados en el nombre del juego que especifiquemos mostrándonos la información de los directos más populares en el momento
+        '''
+        #limpiar los widgets anteriores
+        for widget in self.twitch_frame.winfo_children():
+            widget.destroy()
+            #obtenemos el nombre del juego mediante la caja de texto de la interfaz
+            game_name = self.game_entry.get()
+            if game_name:
+                #llamamos al método get_top_twitch_streams para que nos devuelva la lista de los directos
+                #importante pasar la id del cliente y el client_secret para realizar la conexión con la API
+                streams = get_top_twitch_streams(game_name, self.client_id, self.client_secret)
+                #mostramos la información de la lista mediante el método show_top_twitch_streams
+                self.show_top_twitch_streams(streams)
+
+    def show_top_twitch_streams(self, streams):
+        '''
+        Mostrar los resultados de la búsqueda de canales de Twitch en la interfaz
+        '''
+        #limpiar widgets anteriores
+        for widget in self.twitch_frame.winfo_children():
+            widget.destroy()
+        #iteramos sobre los resultados para ir obteniendo la información y mostrarla en la interfaz
+        #para cada iteración creamos un label que almacene la información
+        if streams.get('data'):
+            for stream in streams['data']:
+                stream_info = f"Title: {stream['title']}, Viewers: {stream['viewer_count']}, Channel: {stream['user_name']}"
+                label = tk.Label(self.twitch_frame, text=stream_info, bg=self.twitch_frame.cget("bg"), fg="white")
+                label.pack(pady=5)
+        else:
+            label = tk.Label(self.twitch_frame, text="No se encontraron canales para este juego.", bg=self.twitch_frame.cget("bg"), fg="white")
+            label.pack(pady=5)
+    
+def get_top_twitch_streams(game_name, client_id, client_secret, limit=5):
+    '''
+    Obtener los streams principales de Twitch para un juego específico
+    Devuelve la información en formato JSON
+    '''
+    #realizar autenticación para obtener un token de acceso proporcionando el client_id y el client_secret
+    auth_url = 'https://id.twitch.tv/oauth2/token'
+    auth_params = {
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'grant_type': 'client_credentials'
+    }
+    auth_response = requests.post(auth_url, params=auth_params)
+    #token para realizar las solicitudes
+    access_token = auth_response.json()['access_token']
+
+    headers = {
+        'Client-ID': client_id,
+        'Authorization': f'Bearer {access_token}'
+    }
+
+    #obtener el ID del juego usando su nombre
+    game_search_url = f'https://api.twitch.tv/helix/games?name={game_name}'
+    game_search_response = requests.get(game_search_url, headers=headers)
+    game_id = game_search_response.json()['data'][0]['id']
+
+    stream_url = f'https://api.twitch.tv/helix/streams?first={limit}&game_id={game_id}'
+    stream_response = requests.get(stream_url, headers=headers)
+    return stream_response.json()
 
 class LoginWindow:
     """
