@@ -157,7 +157,7 @@ class GamesInterface:
         Mostrar los resultados de la búsqueda de canales de Twitch en la interfaz
         '''
         #limpiar widgets anteriores
-        for widget in self.twitch_frame.winfo_children():
+        for widget in self.twitch_frame.winfo_children(): #winfo_children() método de la clase Tkinter para obtener todos los widgets secundarios de un widget padre
             widget.destroy()
         #iteramos sobre los resultados para ir obteniendo la información y mostrarla en la interfaz
         #para cada iteración creamos un label que almacene la información
@@ -185,6 +185,7 @@ def get_top_twitch_streams(game_name, client_id, client_secret, limit=5):
         'client_secret': client_secret,
         'grant_type': 'client_credentials'
     }
+    #realizamos la conexión a la url dada mediante la librería requests
     auth_response = requests.post(auth_url, params=auth_params)
     #token para realizar las solicitudes
     access_token = auth_response.json()['access_token']
