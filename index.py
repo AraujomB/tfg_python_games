@@ -3,21 +3,24 @@ from tkinter import ttk, messagebox
 import mysql.connector
 from register import RegisterWindow
 from PIL import Image, ImageTk
-import subprocess, pygame
+import subprocess, pygame, json
 
 class GamesInterface:
     '''
     Clase para crear nuestra interfaz de juegos en la que establecemos una configuración predeterminada para cuando sea instanciada
     '''
-    def __init__(self, master):
+    def __init__(self, master, config):
         '''
         constructor en el cual creamos todos los apartados de nuestra interfaz y definimos los botones de cada juego y la configuración de la ventana
+        Recibe un archivo json con parámetros para la configuración de la interfaz
         '''
         self.master = master #ventana principal
         self.master.title("Portal de Juegos TFG PABLO ARAUJO")
 
-        window_width = 900
-        window_height = 620
+        window_width = config.get("window_width")
+        window_height = config.get("window_height")
+        volume = config.get("volume")
+        title_interface = config.get("title")
 
         #configurar el fondo de pantalla
         background_img = Image.open("assets/images/background_interface.jpg")
@@ -30,7 +33,7 @@ class GamesInterface:
         pygame.init()
         pygame.mixer.music.load("assets\sounds\good-night-160166.mp3")
         pygame.mixer.music.play(-1)
-        pygame.mixer.music.set_volume(0.2)
+        pygame.mixer.music.set_volume(volume)
 
         #obtener el color predominante de la imagen de fondo
         colors = background_img.getcolors(window_width * window_height)
@@ -43,7 +46,7 @@ class GamesInterface:
 
         #https://docs.python.org/es/3.9/library/tkinter.font.html
         title_font =  ('Verdana', 16)
-        self.label = tk.Label(self.frame, text=f"MinijuegosTFG.com", font=title_font, bg=rgb_color, fg="white")
+        self.label = tk.Label(self.frame, text=f"{title_interface}", font=title_font, bg=rgb_color, fg="white")
         self.label.pack(pady=20)
 
         #cargar las imágenes y crear los botones para cada juego
@@ -218,15 +221,19 @@ class LoginWindow:
         self.master.deiconify() #restaurar la visibilidad de la ventana principal a la que está asociada
 
 def main():
+    #leemos el archivo de configuración
+    with open("config.json") as config_file:
+        config = json.load(config_file)
+
     #Crear la ventana principal
     root = tk.Tk()
 
     #Crear la interfaz de juegos con las configuraciones definidas en la clase
-    interfaz = GamesInterface(root)
+    interfaz = GamesInterface(root, config)
 
     #Centrar la ventana en la pantalla del usuario
-    window_width = 900
-    window_height = 620
+    window_width = config.get("window_width")
+    window_height = config.get("window_height")
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
     x_coordinate = int((screen_width / 2) - (window_width / 2))
