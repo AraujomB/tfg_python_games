@@ -43,6 +43,10 @@ class GamesInterface:
         dominant_color = max(colors, key=lambda x: x[0])[1]
         rgb_color = "#%02x%02x%02x" % dominant_color
         
+        #botón de Cerrar Sesión
+        self.logout_button = ttk.Button(master, text="Cerrar Sesión", command=self.logout)
+        self.logout_button.pack(side=tk.TOP, anchor=tk.NE, padx=20, pady=10)
+        
         #area para los botones de los juegos
         self.frame = tk.Frame(master, bg=rgb_color)
         self.frame.pack(pady=50)
@@ -83,10 +87,6 @@ class GamesInterface:
 
         self.search_button = ttk.Button(self.search_frame, text="Buscar Juego en Twitch", command=self.search_channels)
         self.search_button.pack(side=tk.LEFT, padx=10)
-
-        #botón de Cerrar Sesión
-        self.logout_button = ttk.Button(self.master, text="Cerrar Sesión", command=self.logout)
-        self.logout_button.pack(side=tk.BOTTOM, padx=20, pady=10)
 
         # Mostrar los streams destacados de Twitch
         self.twitch_frame = tk.Frame(master, bg=rgb_color)
@@ -166,8 +166,11 @@ class GamesInterface:
                 stream_info = f"Title: {stream['title']}, Viewers: {stream['viewer_count']}, Channel: {stream['user_name']}"
                 label = tk.Label(self.twitch_frame, text=stream_info, bg=self.twitch_frame.cget("bg"), fg="white")
                 label.pack(pady=5)
-        else:
+        elif self.game_entry.get():
             label = tk.Label(self.twitch_frame, text="No se encontraron canales para este juego.", bg=self.twitch_frame.cget("bg"), fg="white")
+            label.pack(pady=5)
+        else:
+            label = tk.Label(self.twitch_frame, text="Introduzca un juego para buscar los Streams más populares actualmente.", bg=self.twitch_frame.cget("bg"), fg="white")
             label.pack(pady=5)
     
 def get_top_twitch_streams(game_name, client_id, client_secret, limit=5):
