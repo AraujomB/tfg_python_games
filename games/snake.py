@@ -1,6 +1,4 @@
-import turtle
-import time
-import random
+import turtle, time, random, pygame, sys, os
 
 #Clásico juego de Snake usando la librería turtle de Python
 
@@ -69,6 +67,15 @@ def mov():
     if snake.direction == "right":
         x = snake.xcor()
         snake.setx(x+20)
+    
+#Obtenemos la ruta de los recursos
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+        #devolvemos la ruta absoluta de los recursos
+        return os.path.join(base_path, relative_path)
 
 #configuramos el teclado
 screen.listen()
@@ -83,6 +90,15 @@ while True:
 
     #interaccion con la comida
     if snake.distance(comida) < 20:
+        #iniciamos pygame para poder reproducir efectos de sonido
+        pygame.init()
+        #cargamos el sonido para coger comida
+        asset_sound = resource_path('assets/sounds/collect-points.mp3')
+        sound = pygame.mixer.music.load(asset_sound)
+        #reproducimos el sonido de fondo en bucle y ajustamos el volumen
+        pygame.mixer.music.play(0)
+        pygame.mixer.music.set_volume(0.2)
+
         x = random.randint(-360, 360)
         y = random.randint(-360, 360)
         comida.goto(x,y)
