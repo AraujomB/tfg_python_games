@@ -1,6 +1,8 @@
 {
-    "window_height" : 620,
-    "window_width" : 920,
+    "window_height" : 720,
+    "window_width" : 1080,
     "volume" : 0.2,
-    "title" : "MinijuegosTFG.com"
+    "title" : "MinijuegosTFG.com",
+    "twitch_client_id" : "kcxqxd7r0bcizkoeax00kpiezfklxr",
+    "twitch_client_secret" : "kt4u147o9v9ybwufsbxvaqzehjnfs0"
 }
