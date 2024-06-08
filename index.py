@@ -85,7 +85,7 @@ class GamesInterface:
         self.game_entry = ttk.Entry(self.search_frame)
         self.game_entry.pack(side=tk.LEFT, padx=10)
 
-        self.search_button = ttk.Button(self.search_frame, text="Buscar Juego en Twitch", command=self.search_channels)
+        self.search_button = ttk.Button(self.search_frame, text="Buscar juego en Twitch", command=self.search_channels)
         self.search_button.pack(side=tk.LEFT, padx=10)
 
         # Mostrar los streams destacados de Twitch
@@ -170,7 +170,7 @@ class GamesInterface:
             label = tk.Label(self.twitch_frame, text="No se encontraron canales para este juego.", bg=self.twitch_frame.cget("bg"), fg="white")
             label.pack(pady=5)
         else:
-            label = tk.Label(self.twitch_frame, text="Introduzca un juego para buscar los Streams más populares actualmente.", bg=self.twitch_frame.cget("bg"), fg="white")
+            label = tk.Label(self.twitch_frame, text="Introduzca un juego para buscar los streams más populares actualmente.", bg=self.twitch_frame.cget("bg"), fg="white")
             label.pack(pady=5)
     
 def get_top_twitch_streams(game_name, client_id, client_secret, limit=5):
