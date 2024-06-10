@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-import mysql.connector
+import mysql.connector, threading
 from register import RegisterWindow
 from PIL import Image, ImageTk
 import subprocess, pygame, json, requests
@@ -146,11 +146,15 @@ class GamesInterface:
             #obtenemos el nombre del juego mediante la caja de texto de la interfaz
             game_name = self.game_entry.get()
             if game_name:
-                #llamamos al método get_top_twitch_streams para que nos devuelva la lista de los directos
-                #importante pasar la id del cliente y el client_secret para realizar la conexión con la API
-                streams = get_top_twitch_streams(game_name, self.client_id, self.client_secret)
-                #mostramos la información de la lista mediante el método show_top_twitch_streams
-                self.show_top_twitch_streams(streams)
+                #utilizamos la clase threading para realizar la búsqueda de los canales a través de hilos y optimizar la ejecución
+                threading.Thread(target=self.fetch_and_show_streams, args=(game_name,)).start()
+
+    def fetch_and_show_streams(self, game_name):
+        '''
+        Método aparte para buscar y mostrar los datos de los streams en la interfaz
+        '''
+        streams = get_top_twitch_streams(game_name, self.client_id, self.client_secret)
+        self.show_top_twitch_streams(streams)
 
     def show_top_twitch_streams(self, streams):
         '''
