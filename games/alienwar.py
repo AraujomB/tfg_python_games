@@ -140,6 +140,7 @@ for i in range(no_of_enemies):
         over_text = game_over_font.render("GAME OVER", True, (255, 255, 255))
         text_rect = over_text.get_rect(center=(int(SCREEN_WIDTH/2), int(SCREEN_HEIGHT/2)))
         screen.blit(over_text, text_rect)
+        pygame.display.flip()
 
     #Bucle en el que se va a ejecutar el juego
     def gameloop():
@@ -199,6 +200,17 @@ for i in range(no_of_enemies):
                     for j in range(no_of_enemies):
                         enemyY[j] = 2000
                     game_over_text()
+                    waiting_for_key = True
+                    while waiting_for_key:
+                        for event in pygame.event.get():
+                            if event.type == pygame.QUIT:
+                                waiting_for_key = False
+                                run = False
+                            elif event.type == pygame.KEYDOWN:
+                                waiting_for_key = False
+                                run = False
+                        pygame.display.update()
+                    break
                 
                 enemyX[i] += enemyX_change[i]
                 if enemyX[i] <= 0:
