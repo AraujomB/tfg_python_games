@@ -165,12 +165,13 @@ class GamesInterface:
             widget.destroy()
         #iteramos sobre los resultados para ir obteniendo la información y mostrarla en la interfaz
         #para cada iteración creamos un label que almacene la información
-        if streams.get('data'):
+        #comprobamos lo primero que no se haya devuelto un string cuyo contenido es la palabra null para evitar errores
+        if streams != "null" and streams.get('data'):
             for stream in streams['data']:
                 stream_info = f"Title: {stream['title']}, Viewers: {stream['viewer_count']}, Channel: {stream['user_name']}"
                 label = tk.Label(self.twitch_frame, text=stream_info, bg=self.twitch_frame.cget("bg"), fg="white")
                 label.pack(pady=5)
-        elif self.game_entry.get():
+        elif streams == "null" or self.game_entry.get():
             label = tk.Label(self.twitch_frame, text="No se encontraron canales para este juego.", bg=self.twitch_frame.cget("bg"), fg="white")
             label.pack(pady=5)
         else:
@@ -182,31 +183,35 @@ def get_top_twitch_streams(game_name, client_id, client_secret, limit=5):
     Obtener los streams principales de Twitch para un juego específico
     Devuelve la información en formato JSON
     '''
-    #realizar autenticación para obtener un token de acceso proporcionando el client_id y el client_secret
-    auth_url = 'https://id.twitch.tv/oauth2/token'
-    auth_params = {
-        'client_id': client_id,
-        'client_secret': client_secret,
-        'grant_type': 'client_credentials'
-    }
-    #realizamos la conexión a la url dada mediante la librería requests
-    auth_response = requests.post(auth_url, params=auth_params)
-    #token para realizar las solicitudes
-    access_token = auth_response.json()['access_token']
+    try:
+        #realizar autenticación para obtener un token de acceso proporcionando el client_id y el client_secret
+        auth_url = 'https://id.twitch.tv/oauth2/token'
+        auth_params = {
+            'client_id': client_id,
+            'client_secret': client_secret,
+            'grant_type': 'client_credentials'
+        }
+        #realizamos la conexión a la url dada mediante la librería requests
+        auth_response = requests.post(auth_url, params=auth_params)
+        #token para realizar las solicitudes
+        access_token = auth_response.json()['access_token']
 
-    headers = {
-        'Client-ID': client_id,
-        'Authorization': f'Bearer {access_token}'
-    }
+        headers = {
+            'Client-ID': client_id,
+            'Authorization': f'Bearer {access_token}'
+        }
 
-    #obtener el ID del juego usando su nombre
-    game_search_url = f'https://api.twitch.tv/helix/games?name={game_name}'
-    game_search_response = requests.get(game_search_url, headers=headers)
-    game_id = game_search_response.json()['data'][0]['id']
+        #obtener el ID del juego usando su nombre
+        game_search_url = f'https://api.twitch.tv/helix/games?name={game_name}'
+        game_search_response = requests.get(game_search_url, headers=headers)
+        game_id = game_search_response.json()['data'][0]['id']
 
-    stream_url = f'https://api.twitch.tv/helix/streams?first={limit}&game_id={game_id}'
-    stream_response = requests.get(stream_url, headers=headers)
-    return stream_response.json()
+        stream_url = f'https://api.twitch.tv/helix/streams?first={limit}&game_id={game_id}'
+        stream_response = requests.get(stream_url, headers=headers)
+        return stream_response.json()
+    except:
+        #en caso de haber algún error en la búsqueda devolvemos un string para poder manejarlo mejor a la hora de mostrarlo en la interfaz
+        return "null"
 
 class LoginWindow:
     """
