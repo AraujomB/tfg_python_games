@@ -51,9 +51,17 @@ class RegisterWindow:
                 )
 
                 cursor = connection.cursor() #cursor para realizar peticiones a la base de datos
-                cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password)) #ejecutar la petición
-                connection.commit() #hacer commit de la petición para que quede guardada
-                messagebox.showinfo("Registro Exitoso", "Usuario registrado con éxito")
+
+                #comprobar si el nombre de usuario ya existe
+                cursor.execute("SELECT COUNT(*) FROM users WHERE username = %s", (username,))
+                result = cursor.fetchone()
+                
+                if result[0] > 0:
+                    messagebox.showerror("Error", "Nombre de usuario ya existente")
+                else:
+                    cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password)) #ejecutar la petición
+                    connection.commit() #hacer commit de la petición para que quede guardada
+                    messagebox.showinfo("Registro Exitoso", "Usuario registrado con éxito")
             except Error as e:
                 messagebox.showerror("Error", str(e))
             finally:
