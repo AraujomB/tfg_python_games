@@ -3,6 +3,6 @@
     "window_width" : 1080,
     "volume" : 0.2,
     "title" : "MinijuegosTFG.com",
-    "twitch_client_id" : "kcxqxd7r0bcizkoeax00kpiezfklxr",
-    "twitch_client_secret" : "kt4u147o9v9ybwufsbxvaqzehjnfs0"
+    "twitch_client_id" : "your_twitch_client_id",
+    "twitch_client_secret" : "your_twitch_client_secret"
 }
